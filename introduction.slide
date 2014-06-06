@@ -1,0 +1,264 @@
+Introduction to Go
+The Beautiful and Powerful Programming Language
+
+20:00 5 June 2014
+Tags: Go
+
+astaxie
+Zalora
+
+http://github.com/astaxie
+http://twitter.com/astaxie
+
+* Outline
+- What is Go?
+- What does Go look like?
+- Who is using Go?
+- What can Go do?
+- Pros & Cons
+
+* What is Go?
+Go is a compiled, concurrent, garbage-collected, statically typed language from Google
+
+- compile to binary
+- feels like C + python
+- concurrence
+- support GC 
+- easy to learn
+- useful libs (net/http, os, encoding)
+- convenient tools (get, gofmt, godoc, gofix) 
+
+* Why do we need a new language?
+general trend：
+
+- hardware：multicore
+- system：cloud, RPC, clusters
+
+* Other Pain points：
+
+- slow builds
+.image api/compiling.png
+
+Rob pike:
+
+	When builds are slow, there is time to think
+
+* Other Pain points
+- uncontrolled dependencies
+- each programmer using a different subset of the language
+- poor programming skills (Code is hard to read; Bad document; and so on)
+- duplication of effort
+- cost of updates
+- version skew
+- difficulty of writing automatic tools
+- cross-language builds
+
+Go at Google: Language Design in the Service of Software Engineering
+
+.link http://talks.golang.org/2012/splash.article
+
+* The history of Go
+
+- Start design 2007
+- Release Go1.0 Mar 2012
+
+.image api/influences_on_go.jpg 480 600
+
+* How does Go look like?
+
+- Hello World
+
+.play api/hello.go
+
+* http server
+
+.play api/http.go
+
+* JSON
+
+.play api/json.go
+
+* concurrence
+
+Example: Github Search
+Q: What does Github search do?
+A: Given a query, return a page of search results.
+Q: How do we get the search results?
+A: Send the query to repository search, code search, issues search, Users,etc., then mix the results.
+How do we implement this?
+
+* Github Search: A fake framework
+.code api/github1.go /START2/,/STOP2/
+
+* Github Search: Test the framework
+
+.play api/github1.go /func.main/,/}/
+
+* Github Search 1.0
+
+The Github function takes a query and returns a slice of Results (which are just strings).
+
+Github invokes repository, Code, and issues searches serially, appending them to the results slice.
+
+.play api/github1.go /START1/,/STOP1/
+
+* Github Search 2.0
+
+Run the repository, code, and issues searches concurrently, and wait for all results.
+
+No locks.  No condition variables.  No callbacks.
+
+.play api/github2.1.go /Github/,/^}/
+
+* Github Search 2.1
+
+Don't wait for slow servers. No locks.  No condition variables.  No callbacks.
+
+.play api/github2.2.go /START/,/STOP/
+
+* Avoid timeout
+
+Q: How do we avoid discarding results from slow servers?
+
+A: Replicate the servers.  Send requests to multiple replicas, and use the first response.
+
+.code api/github2.3.go /START1/,/STOP1/
+
+* Using the First function
+
+.play api/github2.3.go /START2/,/STOP2/
+
+* Github Search 3.0
+
+Reduce tail latency using replicated search servers.
+
+.play api/github3.0.go /START/,/STOP/
+
+* performance benchmark
+
+.image api/benchmark.png 800 1000
+
+* Companies who are using Go
+
+- google
+- youtube
+- docker
+- Apcera.com
+- Stathat.com
+- Juju at Canonical/Ubuntu, presentation
+- CloudFlare
+- Soundcloud
+- Mozilla
+- Disqus
+- Bit.ly
+- Heroku
+
+* What can Go do
+- backend system
+- distributed system
+- web application
+- API application
+- Cloud system
+
+* docker
+Docker - an easy, lightweight virtualized environment for portable applications.
+
+.image api/docker.png  550 1000
+
+* message queue
+
+.image api/nsq.png
+.image api/nsq2.png
+
+* distributed system
+
+- Skynet
+Skynet is a communication protocol for building massively distributed apps in Go. It is not constrained to Go, so it will lend itself nicely to polyglot environments.
+
+.image api/skynet.png 300 300
+
+* etcd
+A highly-available key value store for shared configuration and service discovery
+
+.image api/etcd.png
+
+* Heka
+
+Heka simplifies the collection, analysis, and transportation of data across your cluster/server
+
+- Application performance metrics
+- Server load, memory consumption, and other machine metrics
+- Database, Cache server, and other daemon metrics
+- Various statsd counters
+- Log-file transportion and statsd counter generation
+
+* storage system
+
+- couchbaselabs cbfs
+
+.image api/cbfs.png 400 400
+
+* cloud platform
+- tsuru 
+- cloudfoundy
+- Apcera nats
+
+* database
+- InfluxDB An open-source distributed time series database
+- god  god is a scalable, performant, persistent, in-memory data structure server.
+- groupcache   a replacement for memcached
+- tiedot NoSQL database
+- skydb behavioral analytics database
+
+* ServerSide For Game
+
+- Web Game
+- mobile game
+
+* networking system
+- gor 
+.image api/gor.png
+
+- cow web proxy
+- gospide spider
+
+* Web Framework
+- beego
+- revel
+- martini
+- webgo
+- falcore
+
+* Pros
+- powerful compiler： fast & check in compile
+- gotools：gofmt goimports godoc go tool。
+- simple：25 keywords. easy to learn
+- useful stdlib：net net/http os 
+- concurrence：easy to write concurrence by channel & goroutine
+- fun：coding like python, but running as fast as C.
+- stable：since 1.0
+- binary：easy to deploy
+- cross compile：develop in mac, compile in mac, delpoy to Linux
+- profile：easy to find the problem.
+- cgo.
+
+* Cons
+
+- import doesn't support version
+- races when use wrong channel
+- no generics 
+- it's difficult to debug. just use log+fmt
+- GC
+
+* Go is good enough for me
+
+- Go is flexible, fun and readable
+- Go is fast (for computers & humans)
+- Go is good for team working
+- Go is good for my life
+
+* what am I doing with Go
+
+.image api/github.png 800 1000
+
+* Q&A
